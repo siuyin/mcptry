@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"os/exec"
@@ -54,7 +55,12 @@ func main() {
 func ollamaTools(lt *mcp.ListToolsResult) {
 	tools, _ := ConvertMCPToolsToOllamaTools(lt.Tools)
 	for _, t := range tools {
-		fmt.Printf("%v\n", t)
+		//fmt.Printf("%v\n", t)
+		b, err := json.MarshalIndent(t, "", "  ")
+		if err != nil {
+			log.Fatal("marshal: ", err)
+		}
+		fmt.Printf("%s\n", b)
 	}
 
 	toolNames := []string{}
