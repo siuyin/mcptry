@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os/exec"
 
@@ -11,7 +12,8 @@ import (
 
 func main() {
 	name := dflt.EnvString("NAME", "Siu Yin")
-	log.Printf("NAME=%s", name)
+	svr := dflt.EnvString("SERVER", "myserver")
+	log.Printf("SERVER=%s NAME=%s", svr, name)
 
 	ctx := context.Background()
 
@@ -19,12 +21,23 @@ func main() {
 	client := mcp.NewClient(&mcp.Implementation{Name: "mcp-client", Version: "v1.0.0"}, nil)
 
 	// Connect to a server over stdin/stdout
-	transport := mcp.NewCommandTransport(exec.Command("myserver"))
+	transport := mcp.NewCommandTransport(exec.Command(svr))
 	session, err := client.Connect(ctx, transport)
 	if err != nil {
 		log.Fatal("connect: ", err)
 	}
 	defer session.Close()
+
+	// List Tools
+	lt, err := session.ListTools(ctx, &mcp.ListToolsParams{})
+	if err != nil {
+		log.Fatal("list tools: ", err)
+	}
+	for _, t := range lt.Tools {
+		is := t.InputSchema
+		nameProp := is.Properties["name"]
+		fmt.Printf("%s: %v %v %#v\n", t.Name, t.InputSchema.Type, t.InputSchema.Required, nameProp.Type)
+	}
 
 	// Call a tool on the server.
 	params := &mcp.CallToolParams{
