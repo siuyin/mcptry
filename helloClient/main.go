@@ -6,9 +6,13 @@ import (
 	"os/exec"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
+	"github.com/siuyin/dflt"
 )
 
 func main() {
+	name := dflt.EnvString("NAME", "Siu Yin")
+	log.Printf("NAME=%s", name)
+
 	ctx := context.Background()
 
 	// Create a new client, with no features.
@@ -25,7 +29,7 @@ func main() {
 	// Call a tool on the server.
 	params := &mcp.CallToolParams{
 		Name:      "greet",
-		Arguments: map[string]any{"name": "Siu Yin"},
+		Arguments: map[string]any{"name": name},
 	}
 	res, err := session.CallTool(ctx, params)
 	if err != nil {
