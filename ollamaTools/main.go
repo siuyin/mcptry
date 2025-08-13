@@ -50,6 +50,7 @@ func main() {
 	mcpCallTool(session, toolParam)
 
 }
+
 func ollamaTools(lt *mcp.ListToolsResult) {
 	tools, _ := ConvertMCPToolsToOllamaTools(lt.Tools)
 	for _, t := range tools {
