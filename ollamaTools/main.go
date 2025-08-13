@@ -64,6 +64,14 @@ func ollamaTools(lt *mcp.ListToolsResult) {
 	fmt.Printf("%v\n", toolNames)
 }
 
+type ToolParams struct {
+	Type       string                      `json:"type"`
+	Defs       any                         `json:"$defs,omitempty"`
+	Items      any                         `json:"items,omitempty"`
+	Required   []string                    `json:"required"`
+	Properties map[string]api.ToolProperty `json:"properties"`
+}
+
 func ConvertMCPToolsToOllamaTools(mcpTools []*mcp.Tool) ([]api.Tool, error) {
 	ollamaTools := make([]api.Tool, len(mcpTools))
 	for i, tool := range mcpTools {
@@ -84,13 +92,7 @@ func ConvertMCPToolsToOllamaTools(mcpTools []*mcp.Tool) ([]api.Tool, error) {
 			Function: api.ToolFunction{
 				Name:        tool.Name,
 				Description: tool.Description,
-				Parameters: struct {
-					Type       string                      `json:"type"`
-					Defs       any                         `json:"$defs,omitempty"`
-					Items      any                         `json:"items,omitempty"`
-					Required   []string                    `json:"required"`
-					Properties map[string]api.ToolProperty `json:"properties"`
-				}{
+				Parameters: ToolParams{
 					Type:       "object",
 					Properties: properties,
 					Required:   required,
