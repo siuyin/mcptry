@@ -37,25 +37,25 @@ func main() {
 
 	ollamaTools(lt)
 
-	// Call a tool on the server.
-	params := &mcp.CallToolParams{
+	toolParam := &mcp.CallToolParams{
 		Name:      "greet",
 		Arguments: map[string]any{"name": name},
 	}
-	res, err := session.CallTool(ctx, params)
-	if err != nil {
-		log.Fatalf("CallTool failed: %v", err)
+	mcpCallTool(session, toolParam)
+
+	toolParam = &mcp.CallToolParams{
+		Name:      "bye",
+		Arguments: map[string]any{"name": name},
 	}
-	if res.IsError {
-		log.Fatal("tool failed")
-	}
-	for _, c := range res.Content {
-		log.Print(c.(*mcp.TextContent).Text)
-	}
+	mcpCallTool(session, toolParam)
+
 }
 func ollamaTools(lt *mcp.ListToolsResult) {
 	tools, _ := ConvertMCPToolsToOllamaTools(lt.Tools)
-	fmt.Printf("%v\n", tools)
+	for _, t := range tools {
+		fmt.Printf("%v\n", t)
+	}
+
 	toolNames := []string{}
 	for _, t := range tools {
 		toolNames = append(toolNames, t.Function.Name)
@@ -98,4 +98,18 @@ func ConvertMCPToolsToOllamaTools(mcpTools []*mcp.Tool) ([]api.Tool, error) {
 		}
 	}
 	return ollamaTools, nil
+}
+
+func mcpCallTool(session *mcp.ClientSession, params *mcp.CallToolParams) {
+	ctx := context.Background()
+	res, err := session.CallTool(ctx, params)
+	if err != nil {
+		log.Fatalf("CallTool failed: %v", err)
+	}
+	if res.IsError {
+		log.Fatal("tool failed")
+	}
+	for _, c := range res.Content {
+		log.Print(c.(*mcp.TextContent).Text)
+	}
 }
