@@ -34,11 +34,6 @@ func main() {
 	if err != nil {
 		log.Fatal("list tools: ", err)
 	}
-	for _, t := range lt.Tools {
-		is := t.InputSchema
-		nameProp := is.Properties["name"]
-		fmt.Printf("%s: %v %v %#v\n", t.Name, t.InputSchema.Type, t.InputSchema.Required, nameProp.Type)
-	}
 
 	ollamaTools(lt)
 
@@ -61,6 +56,11 @@ func main() {
 func ollamaTools(lt *mcp.ListToolsResult) {
 	tools, _ := ConvertMCPToolsToOllamaTools(lt.Tools)
 	fmt.Printf("%v\n", tools)
+	toolNames := []string{}
+	for _, t := range tools {
+		toolNames = append(toolNames, t.Function.Name)
+	}
+	fmt.Printf("%v\n", toolNames)
 }
 
 func ConvertMCPToolsToOllamaTools(mcpTools []*mcp.Tool) ([]api.Tool, error) {
