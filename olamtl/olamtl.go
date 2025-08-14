@@ -14,6 +14,7 @@ type ToolParams struct {
 	Properties map[string]api.ToolProperty `json:"properties"`
 }
 
+// FromMCP converts MCP tools to ollama tools.
 func FromMCP(mcpTools []*mcp.Tool) ([]api.Tool, error) {
 	ollamaTools := make([]api.Tool, len(mcpTools))
 	for i, tool := range mcpTools {
