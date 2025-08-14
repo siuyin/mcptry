@@ -28,8 +28,8 @@ func main() {
 	// Create a server with a single tool.
 	server := mcp.NewServer(&mcp.Implementation{Name: "greeter", Version: "v1.0.0"}, nil)
 
-	mcp.AddTool(server, &mcp.Tool{Name: "greet", Description: "say hi"}, SayHi)
-	mcp.AddTool(server, &mcp.Tool{Name: "bye", Description: "say goodbye"}, SayBye)
+	mcp.AddTool(server, &mcp.Tool{Name: "greet", Description: "welcome a person by name by saying hi"}, SayHi)
+	mcp.AddTool(server, &mcp.Tool{Name: "bye", Description: "send off a person by name by saying goodbye"}, SayBye)
 	// Run the server over stdin/stdout, until the client disconnects
 	if err := server.Run(context.Background(), mcp.NewStdioTransport()); err != nil {
 		log.Println("run: ", err)
