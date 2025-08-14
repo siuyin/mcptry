@@ -55,7 +55,6 @@ func main() {
 func ollamaTools(lt *mcp.ListToolsResult) {
 	tools, _ := ConvertMCPToolsToOllamaTools(lt.Tools)
 	for _, t := range tools {
-		//fmt.Printf("%v\n", t)
 		b, err := json.MarshalIndent(t, "", "  ")
 		if err != nil {
 			log.Fatal("marshal: ", err)
