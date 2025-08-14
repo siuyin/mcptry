@@ -7,6 +7,8 @@ import (
 	"log"
 	"os/exec"
 
+	"github.com/siuyin/mcptry/olamtl"
+
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/ollama/ollama/api"
 	"github.com/siuyin/dflt"
@@ -53,7 +55,8 @@ func main() {
 }
 
 func ollamaTools(lt *mcp.ListToolsResult) {
-	tools, _ := ConvertMCPToolsToOllamaTools(lt.Tools)
+	//tools, _ := ConvertMCPToolsToOllamaTools(lt.Tools)
+	tools, _ := olamtl.FromMCP(lt.Tools)
 	for _, t := range tools {
 		b, err := json.MarshalIndent(t, "", "  ")
 		if err != nil {

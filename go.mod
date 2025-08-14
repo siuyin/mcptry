@@ -1,4 +1,4 @@
-module mcptry
+module github.com/siuyin/mcptry
 
 go 1.24.6
 
