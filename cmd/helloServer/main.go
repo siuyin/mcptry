@@ -17,7 +17,7 @@ func main() {
 	mcp.AddTool(server, &mcp.Tool{Name: "greet", Description: "welcome a person by name by saying hi"}, SayHi)
 	mcp.AddTool(server, &mcp.Tool{Name: "bye", Description: "send off a person by name by saying goodbye"}, SayBye)
 	mcp.AddTool(server, &mcp.Tool{Name: "utcTime", Description: "get the current time in UTC."}, utcTime)
-	mcp.AddTool(server, &mcp.Tool{Name: "weather", Description: "get the weather forecast for a given location"}, weather)
+	mcp.AddTool(server, &mcp.Tool{Name: "weather", Description: "get the weather forecast (temperature, humidity) for a given location"}, weather)
 
 	// Run the server over stdin/stdout, until the client disconnects
 	if err := server.Run(context.Background(), mcp.NewStdioTransport()); err != nil {
