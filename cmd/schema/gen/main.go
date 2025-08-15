@@ -17,7 +17,8 @@ func main() {
 
 	explore(jsch)
 
-	person := Name{Name: "Siu Yin"}
+	person := Name{Name: "Siu Yin", Sex: "M"}
+	person2 := Name{Name: "Kit Siew"}
 
 	jschResolved, err := jsch.Resolve(nil)
 	if err != nil {
@@ -25,9 +26,24 @@ func main() {
 	}
 
 	if err := jschResolved.Validate(&person); err != nil {
-		log.Fatal("resolve error: ", err)
+		log.Fatal("validate error: ", err)
 	}
-	fmt.Println("validated")
+	fmt.Println("person validated")
+
+	if err := jschResolved.Validate(&person2); err != nil {
+		log.Fatal("validate error: ", err)
+	}
+	fmt.Println("person2 validated")
+
+	dat, err := jsch.MarshalJSON()
+	if err != nil {
+		log.Fatal("marshal: ", err)
+	}
+	fmt.Printf("%s\n", dat)
+
+	if err := jsch.UnmarshalJSON(dat); err != nil {
+		log.Fatal("unmarshal: ", err)
+	}
 }
 
 func makeJSONSchema[T any]() *jsonschema.Schema {
