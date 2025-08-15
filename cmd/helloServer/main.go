@@ -9,6 +9,23 @@ import (
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
 
+func main() {
+	log.Println("myserver running")
+	// Create a server with a single tool.
+	server := mcp.NewServer(&mcp.Implementation{Name: "greeter", Version: "v1.0.0"}, nil)
+
+	mcp.AddTool(server, &mcp.Tool{Name: "greet", Description: "welcome a person by name by saying hi"}, SayHi)
+	mcp.AddTool(server, &mcp.Tool{Name: "bye", Description: "send off a person by name by saying goodbye"}, SayBye)
+	mcp.AddTool(server, &mcp.Tool{Name: "utcTime", Description: "get the current time in UTC."}, utcTime)
+	mcp.AddTool(server, &mcp.Tool{Name: "weather", Description: "get the weather forecast for a given location"}, weather)
+
+	// Run the server over stdin/stdout, until the client disconnects
+	if err := server.Run(context.Background(), mcp.NewStdioTransport()); err != nil {
+		log.Println("run: ", err)
+	}
+
+}
+
 type NameParams struct {
 	Name string `json:"name" jsonschema:"the name of the person to address"`
 }
@@ -42,17 +59,11 @@ func utcTime(ctx context.Context, ss *mcp.ServerSession, req *mcp.CallToolParams
 	return &mcp.CallToolResultFor[any]{Content: []mcp.Content{&mcp.TextContent{Text: ret}}}, nil
 }
 
-func main() {
-	log.Println("myserver running")
-	// Create a server with a single tool.
-	server := mcp.NewServer(&mcp.Implementation{Name: "greeter", Version: "v1.0.0"}, nil)
+type weatherInput struct {
+	Location string `json:"location"`
+}
 
-	mcp.AddTool(server, &mcp.Tool{Name: "greet", Description: "welcome a person by name by saying hi"}, SayHi)
-	mcp.AddTool(server, &mcp.Tool{Name: "bye", Description: "send off a person by name by saying goodbye"}, SayBye)
-	mcp.AddTool(server, &mcp.Tool{Name: "utcTime", Description: "get the current time in UTC."}, utcTime)
-	// Run the server over stdin/stdout, until the client disconnects
-	if err := server.Run(context.Background(), mcp.NewStdioTransport()); err != nil {
-		log.Println("run: ", err)
-	}
-
+func weather(ctx context.Context, ss *mcp.ServerSession, req *mcp.CallToolParamsFor[weatherInput]) (*mcp.CallToolResultFor[any], error) {
+	ret := fmt.Sprintf("The weather in %s is a Sunny 30°C. Rain is expected later.", req.Arguments.Location)
+	return &mcp.CallToolResultFor[any]{Content: []mcp.Content{&mcp.TextContent{Text: ret}}}, nil
 }
