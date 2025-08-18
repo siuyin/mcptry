@@ -18,6 +18,7 @@ func main() {
 	mcp.AddTool(server, &mcp.Tool{Name: "bye", Description: "send off a person by name by saying goodbye"}, SayBye)
 	mcp.AddTool(server, &mcp.Tool{Name: "utcTime", Description: "get the current time in UTC."}, utcTime)
 	mcp.AddTool(server, &mcp.Tool{Name: "weather", Description: "get the weather forecast (temperature, humidity) for a given location"}, weather)
+	mcp.AddTool(server, &mcp.Tool{Name: "stocks", Description: "gets current stock price for a stock ticker. eg. AAPL"}, stock)
 
 	// Run the server over stdin/stdout, until the client disconnects
 	if err := server.Run(context.Background(), mcp.NewStdioTransport()); err != nil {
@@ -65,5 +66,14 @@ type weatherInput struct {
 
 func weather(ctx context.Context, ss *mcp.ServerSession, req *mcp.CallToolParamsFor[weatherInput]) (*mcp.CallToolResultFor[any], error) {
 	ret := fmt.Sprintf("The weather in %s is a Sunny 30°C. Rain is expected later.", req.Arguments.Location)
+	return &mcp.CallToolResultFor[any]{Content: []mcp.Content{&mcp.TextContent{Text: ret}}}, nil
+}
+
+type stockInput struct {
+	Code string `json:"code" jsonschema:"the stock code to retrieve eg. AAPL"`
+}
+
+func stock(ctx context.Context, ss *mcp.ServerSession, req *mcp.CallToolParamsFor[stockInput]) (*mcp.CallToolResultFor[any], error) {
+	ret := fmt.Sprintf("The current price for  %s is USD300.", req.Arguments.Code)
 	return &mcp.CallToolResultFor[any]{Content: []mcp.Content{&mcp.TextContent{Text: ret}}}, nil
 }
