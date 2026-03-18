@@ -34,9 +34,8 @@ func main() {
 		log.Fatal("list tools: ", err)
 	}
 	for _, t := range lt.Tools {
-		is := t.InputSchema
-		nameProp := is.Properties["name"]
-		fmt.Printf("%s: %v %v %#v\n", t.Name, t.InputSchema.Type, t.InputSchema.Required, nameProp.Type)
+		fmt.Printf("tool name: %s, type: %v, required params: %v, types: %v \n",
+			t.Name, t.InputSchema.Type, t.InputSchema.Required, requiredPropertyTypes(t))
 	}
 
 	// Call a tool on the server.
@@ -54,4 +53,14 @@ func main() {
 	for _, c := range res.Content {
 		log.Print(c.(*mcp.TextContent).Text)
 	}
+}
+
+func requiredPropertyTypes(tl *mcp.Tool) []string {
+	pairs := []string{}
+	for _, r := range tl.InputSchema.Required {
+		typ := tl.InputSchema.Properties[r].Type
+		pairs = append(pairs, fmt.Sprintf("%s: %s", r, typ))
+	}
+
+	return pairs
 }
